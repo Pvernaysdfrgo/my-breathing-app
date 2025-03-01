@@ -1,0 +1,74 @@
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Play, Droplet, Book } from "lucide-react";
+
+const breathingSteps = [
+  { id: 1, label: "Back of Head", duration: 4, image: "/mnt/data/file-GNKScDpHRouRmBCpMLFrY1" },
+  { id: 2, label: "Forehead", duration: 4, image: "/mnt/data/file-2T2YoXU2iv8KdamGf9pDJY" },
+  { id: 3, label: "Front Heart", duration: 4, image: "/mnt/data/file-1DwqKKPs8cdMYPRQ1Et94U" },
+  { id: 4, label: "Back Heart", duration: 4, image: "/mnt/data/file-6mGY4iJURCt6UQ1oF5MSvR" }
+];
+
+export default function BreathingApp() {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [isBreathing, setIsBreathing] = useState(false);
+  const [screen, setScreen] = useState("home");
+
+  useEffect(() => {
+    if (!isBreathing) return;
+    const interval = setInterval(() => {
+      setCurrentStep((prev) => (prev + 1) % breathingSteps.length);
+    }, breathingSteps[currentStep].duration * 1000);
+    return () => clearInterval(interval);
+  }, [currentStep, isBreathing]);
+
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-black text-white text-center px-4">
+      {screen === "home" && (
+        <>
+          <h1 className="text-4xl font-light mb-6">My Breathing</h1>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3 w-full max-w-2xl">
+            <Button onClick={() => setScreen("breathing")} className="flex gap-2">
+              <Play /> Guided Breathing
+            </Button>
+            <Button onClick={() => setScreen("aromatherapy")} className="flex gap-2">
+              <Droplet /> Aromatherapy
+            </Button>
+            <Button onClick={() => setScreen("education")} className="flex gap-2">
+              <Book /> Educational Hub
+            </Button>
+          </div>
+        </>
+      )}
+      {screen === "breathing" && (
+        <>
+          <h1 className="text-3xl mb-6">Guided Breathing</h1>
+          <img 
+            src={breathingSteps[currentStep].image} 
+            alt={breathingSteps[currentStep].label} 
+            className="w-60 h-60 object-cover rounded-lg shadow-lg"
+          />
+          <p className="text-lg font-bold mt-4">{breathingSteps[currentStep].label}</p>
+          <Button onClick={() => setIsBreathing(!isBreathing)} className="mt-6">
+            {isBreathing ? "Stop" : "Start"} Breathing
+          </Button>
+          <Button onClick={() => setScreen("home")} className="mt-4">Back</Button>
+        </>
+      )}
+      {screen === "aromatherapy" && (
+        <>
+          <h1 className="text-3xl mb-6">Aromatherapy</h1>
+          <p>Explore essential oils for relaxation.</p>
+          <Button onClick={() => setScreen("home")} className="mt-4">Back</Button>
+        </>
+      )}
+      {screen === "education" && (
+        <>
+          <h1 className="text-3xl mb-6">Educational Hub</h1>
+          <p>Learn about breathing techniques and wellness.</p>
+          <Button onClick={() => setScreen("home")} className="mt-4">Back</Button>
+        </>
+      )}
+    </div>
+  );
+}
